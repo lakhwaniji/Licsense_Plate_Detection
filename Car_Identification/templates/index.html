@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+        .handwriting{
+            font-family:Poppins;
+            font-size:1.5rem;
+        }
+        .container{
+            display:flex;
+            flex-direction:column;
+            justify-content:centre;
+            text-align:center
+        }
+        .button_css{
+            width:12rem;
+            font-size:1rem;
+        }
+        .layout{
+            display:flex;
+            flex-direction:row;
+            justify-content:center;
+            align-content:center;
+        }
+        .col2{
+            margin-top:10rem
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+            <a class="navbar-brand" href="#">Navbar</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Dropdown
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                  </ul>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+                </li>
+              </ul>
+              <form class="d-flex" role="search">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+              </form>
+            </div>
+          </div>
+    </nav>
+    <div class="container">
+        <div class="col handwriting" style="margin-bottom:20px;">
+            Licsense_Plate_Detection
+        </div>
+        <div class="layout">
+            <div class="col">
+                <img src="{% url 'detection' %}" style="width:40rem;">
+            </div>
+            <div class="col2">
+                <div class="col handwriting" style="margin-top:20px;">
+                    Please make sure the number plate is completely visible in the video
+                </div>
+                <div style="margin:10px">
+                    <button type="button" class="btn btn-danger button_css" id="Capture_Button">Check the vehicle</button>
+                </div>
+                <div style="margin:10px">
+                    <button type="button" class="btn btn-info button_css" id="Visitor_Vehicle">Add a visitor vehicle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var button = document.getElementById("Capture_Button");
+            button.addEventListener("click", function() {
+            var url = "http://192.168.225.13:8000/capture_image/";
+            fetch(url)
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                // Handle the data received from the API
+                alert(data.message);
+                var options = ["0 - Allow", "1 - Decline"];
+                var userChoice = prompt("You want to allow the vehicles :\n" + options.join("\n"));
+                userChoice = userChoice.trim();
+                if (userChoice == "0"){
+                    fetch("http://192.168.225.13:8000/opening_gate/")
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data){
+                        alert(data.message);
+                    })
+                }
+                if (userChoice == "1"){
+                    alert("Vehice is not allowed")
+                }
+            })
+            .catch(function(error) {
+                // Handle any errors that occur during the fetch
+                console.error("Error:", error);
+
+            });
+        });
+        var button1 = document.getElementById("Visitor_Vehicle");
+            button1.addEventListener("click", function() {
+            var url = "http://192.168.225.13:8000/visitor_vehicle/";
+            fetch(url)
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                // Handle the data received from the API
+                alert(data.message);
+                var options = ["0 - Allow", "1 - Decline"];
+                var userChoice = prompt("You want to allow the vehicles :\n" + options.join("\n"));
+                userChoice = userChoice.trim();
+                if (userChoice == "0"){
+                    fetch("http://192.168.225.13:8000/opening_gate/")
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data){
+                        alert(data.message);
+                    })
+                }
+                if (userChoice == "1"){
+                    alert("Vehicle is not allowed");
+                }
+            })
+            .catch(function(error) {
+                // Handle any errors that occur during the fetch
+                console.error("Error:", error);
+            });
+        });
+    </script>
+</body>
+</html>
